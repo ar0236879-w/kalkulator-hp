@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Matematika Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .calculator-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(25, 25, 40, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .calculator-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calculator-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #64b5f6;
+        }
+        
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: #64b5f6;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(100, 181, 246, 0.1);
+        }
+        
+        .display-container {
+            padding: 20px;
+        }
+        
+        .calculation-display {
+            width: 100%;
+            min-height: 40px;
+            text-align: right;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-display {
+            width: 100%;
+            text-align: right;
+            font-size: 2.5rem;
+            font-weight: 300;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            color: #64b5f6;
+        }
+        
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 1px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+        }
+        
+        .key {
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 500;
+            background-color: rgba(30, 30, 50, 0.9);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .key:hover {
+            background-color: rgba(40, 40, 70, 0.9);
+        }
+        
+        .key:active {
+            transform: scale(0.95);
+        }
+        
+        .operator {
+            background-color: rgba(41, 98, 255, 0.2);
+            color: #64b5f6;
+        }
+        
+        .operator:hover {
+            background-color: rgba(41, 98, 255, 0.3);
+        }
+        
+        .equals {
+            background-color: #2962ff;
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .equals:hover {
+            background-color: #1a56db;
+        }
+        
+        .clear, .backspace {
+            background-color: rgba(255, 87, 87, 0.2);
+            color: #ff5757;
+        }
+        
+        .clear:hover, .backspace:hover {
+            background-color: rgba(255, 87, 87, 0.3);
+        }
+        
+        .zero {
+            grid-column: span 2;
+        }
+        
+        .memory-info {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: space-between;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .memory-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .memory-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 3px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .memory-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #64b5f6;
+        }
+        
+        /* Tema terang */
+        .light-theme {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+        
+        .light-theme .calculator-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .light-theme .calculator-header {
+            background: rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-theme .calculator-header h1 {
+            color: #2962ff;
+        }
+        
+        .light-theme .theme-toggle {
+            color: #2962ff;
+        }
+        
+        .light-theme .calculation-display {
+            color: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-theme .result-display {
+            color: #2962ff;
+        }
+        
+        .light-theme .key {
+            background-color: rgba(240, 240, 245, 0.9);
+            color: #333;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .light-theme .key:hover {
+            background-color: rgba(230, 230, 240, 0.9);
+        }
+        
+        .light-theme .operator {
+            background-color: rgba(41, 98, 255, 0.1);
+            color: #2962ff;
+        }
+        
+        .light-theme .operator:hover {
+            background-color: rgba(41, 98, 255, 0.2);
+        }
+        
+        .light-theme .equals {
+            background-color: #2962ff;
+            color: white;
+        }
+        
+        .light-theme .clear, .light-theme .backspace {
+            background-color: rgba(255, 87, 87, 0.1);
+            color: #ff5757;
+        }
+        
+        .light-theme .clear:hover, .light-theme .backspace:hover {
+            background-color: rgba(255, 87, 87, 0.2);
+        }
+        
+        .light-theme .memory-info {
+            color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.03);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-theme .memory-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #2962ff;
+        }
+        
+        /* Animasi */
+        @keyframes press {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        .pressed {
+            animation: press 0.2s;
+        }
+        
+        /* Responsif untuk handphone yang lebih kecil */
+        @media (max-width: 380px) {
+            .key {
+                height: 65px;
+                font-size: 1.3rem;
+            }
+            
+            .result-display {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .key {
+                height: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .result-display {
+                font-size: 2rem;
+            }
+            
+            .calculator-header h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1><i class="fas fa-calculator"></i> Kalkulator Pro</h1>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <div class="display-container">
+            <div class="calculation-display" id="calculationDisplay"></div>
+            <div class="result-display" id="resultDisplay">0</div>
+        </div>
+        
+        <div class="keypad">
+            <!-- Baris 1 -->
+            <button class="key clear" data-action="clear">C</button>
+            <button class="key backspace" data-action="backspace"><i class="fas fa-backspace"></i></button>
+            <button class="key operator" data-action="percent">%</button>
+            <button class="key operator" data-action="divide">÷</button>
+            
+            <!-- Baris 2 -->
+            <button class="key" data-number="7">7</button>
+            <button class="key" data-number="8">8</button>
+            <button class="key" data-number="9">9</button>
+            <button class="key operator" data-action="multiply">×</button>
+            
+            <!-- Baris 3 -->
+            <button class="key" data-number="4">4</button>
+            <button class="key" data-number="5">5</button>
+            <button class="key" data-number="6">6</button>
+            <button class="key operator" data-action="subtract">−</button>
+            
+            <!-- Baris 4 -->
+            <button class="key" data-number="1">1</button>
+            <button class="key" data-number="2">2</button>
+            <button class="key" data-number="3">3</button>
+            <button class="key operator" data-action="add">+</button>
+            
+            <!-- Baris 5 -->
+            <button class="key" data-action="plusminus">±</button>
+            <button class="key" data-number="0">0</button>
+            <button class="key" data-action="decimal">.</button>
+            <button class="key equals" data-action="equals">=</button>
+            
+            <!-- Baris 6 - Tombol tambahan -->
+            <button class="key operator" data-action="power">x²</button>
+            <button class="key operator" data-action="sqrt">√</button>
+            <button class="key operator" data-action="pi">π</button>
+            <button class="key operator" data-action="factorial">x!</button>
+        </div>
+        
+        <div class="memory-info">
+            <div>Memori: <span id="memoryStatus">Kosong</span></div>
+            <div class="memory-buttons">
+                <button class="memory-btn" data-memory="mc">MC</button>
+                <button class="memory-btn" data-memory="mr">MR</button>
+                <button class="memory-btn" data-memory="m+">M+</button>
+                <button class="memory-btn" data-memory="m-">M-</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elemen DOM
+        const resultDisplay = document.getElementById('resultDisplay');
+        const calculationDisplay = document.getElementById('calculationDisplay');
+        const themeToggle = document.getElementById('themeToggle');
+        const memoryStatus = document.getElementById('memoryStatus');
+        
+        // State kalkulator
+        let currentOperand = '0';
+        let previousOperand = '';
+        let operation = null;
+        let resetScreen = false;
+        let memory = 0;
+        
+        // Fungsi untuk memperbarui tampilan
+        function updateDisplay() {
+            resultDisplay.textContent = currentOperand;
+            
+            if (previousOperand && operation) {
+                calculationDisplay.textContent = `${previousOperand} ${getOperationSymbol(operation)}`;
+            } else {
+                calculationDisplay.textContent = '';
+            }
+            
+            // Perbarui status memori
+            memoryStatus.textContent = memory !== 0 ? memory : 'Kosong';
+        }
+        
+        // Fungsi untuk mendapatkan simbol operasi
+        function getOperationSymbol(op) {
+            switch(op) {
+                case 'add': return '+';
+                case 'subtract': return '−';
+                case 'multiply': return '×';
+                case 'divide': return '÷';
+                case 'power': return '^';
+                case 'sqrt': return '√';
+                default: return '';
+            }
+        }
+        
+        // Fungsi untuk menambahkan angka
+        function appendNumber(number) {
+            if (currentOperand === '0' || resetScreen) {
+                currentOperand = number;
+                resetScreen = false;
+            } else {
+                // Cegah input angka terlalu panjang
+                if (currentOperand.length < 12) {
+                    currentOperand += number;
+                }
+            }
+        }
+        
+        // Fungsi untuk memilih operasi
+        function chooseOperation(op) {
+            if (currentOperand === '') return;
+            
+            if (previousOperand !== '') {
+                calculate();
+            }
+            
+            operation = op;
+            previousOperand = currentOperand;
+            resetScreen = true;
+        }
+        
+        // Fungsi untuk menghitung
+        function calculate() {
+            let computation;
+            const prev = parseFloat(previousOperand);
+            const current = parseFloat(currentOperand);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            switch(operation) {
+                case 'add':
+                    computation = prev + current;
+                    break;
+                case 'subtract':
+                    computation = prev - current;
+                    break;
+                case 'multiply':
+                    computation = prev * current;
+                    break;
+                case 'divide':
+                    if (current === 0) {
+                        alert("Tidak bisa membagi dengan nol!");
+                        clearCalculator();
+                        return;
+                    }
+                    computation = prev / current;
+                    break;
+                case 'power':
+                    computation = Math.pow(prev, current);
+                    break;
+                case 'sqrt':
+                    if (prev < 0) {
+                        alert("Tidak bisa menghitung akar kuadrat dari bilangan negatif!");
+                        clearCalculator();
+                        return;
+                    }
+                    computation = Math.sqrt(prev);
+                    break;
+                case 'percent':
+                    computation = prev / 100 * current;
+                    break;
+                case 'factorial':
+                    if (prev < 0 || !Number.isInteger(prev)) {
+                        alert("Faktorial hanya untuk bilangan bulat non-negatif!");
+                        clearCalculator();
+                        return;
+                    }
+                    computation = factorial(prev);
+                    break;
+                default:
+                    return;
+            }
+            
+            // Format hasil untuk mencegah angka desimal terlalu panjang
+            currentOperand = formatResult(computation);
+            operation = null;
+            previousOperand = '';
+        }
+        
+        // Fungsi faktorial
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+        
+        // Fungsi untuk memformat hasil
+        function formatResult(result) {
+            // Jika hasilnya terlalu besar atau kecil, gunakan notasi ilmiah
+            if (result.toString().length > 12) {
+                return result.toExponential(6);
+            }
+            
+            // Jika hasilnya desimal, batasi digit desimal
+            if (result % 1 !== 0) {
+                return parseFloat(result.toFixed(8)).toString();
+            }
+            
+            return result.toString();
+        }
+        
+        // Fungsi untuk menghapus semua
+        function clearCalculator() {
+            currentOperand = '0';
+            previousOperand = '';
+            operation = null;
+        }
+        
+        // Fungsi untuk menghapus satu karakter
+        function deleteLast() {
+            if (currentOperand.length === 1 || (currentOperand.length === 2 && currentOperand.startsWith('-'))) {
+                currentOperand = '0';
+            } else {
+                currentOperand = currentOperand.slice(0, -1);
+            }
+        }
+        
+        // Fungsi untuk menambahkan titik desimal
+        function addDecimal() {
+            if (resetScreen) {
+                currentOperand = '0.';
+                resetScreen = false;
+                return;
+            }
+            
+            if (!currentOperand.includes('.')) {
+                currentOperand += '.';
+            }
+        }
+        
+        // Fungsi untuk mengganti tanda positif/negatif
+        function toggleSign() {
+            currentOperand = (parseFloat(currentOperand) * -1).toString();
+        }
+        
+        // Fungsi untuk menghitung persentase
+        function calculatePercent() {
+            if (previousOperand === '' || operation === null) {
+                // Jika tidak ada operasi sebelumnya, ubah angka saat ini menjadi persentase
+                currentOperand = (parseFloat(currentOperand) / 100).toString();
+            } else {
+                // Jika ada operasi sebelumnya, hitung persentase dari angka sebelumnya
+                const prev = parseFloat(previousOperand);
+                const current = parseFloat(currentOperand);
+                currentOperand = (prev / 100 * current).toString();
+            }
+        }
+        
+        // Fungsi untuk konstanta π
+        function addPi() {
+            currentOperand = Math.PI.toString();
+            resetScreen = false;
+        }
+        
+        // Fungsi untuk memori
+        function memoryClear() {
+            memory = 0;
+        }
+        
+        function memoryRecall() {
+            currentOperand = memory.toString();
+            resetScreen = false;
+        }
+        
+        function memoryAdd() {
+            memory += parseFloat(currentOperand) || 0;
+        }
+        
+        function memorySubtract() {
+            memory -= parseFloat(currentOperand) || 0;
+        }
+        
+        // Fungsi untuk menangani animasi tombol
+        function animateButton(button) {
+            button.classList.add('pressed');
+            setTimeout(() => {
+                button.classList.remove('pressed');
+            }, 200);
+        }
+        
+        // Event listener untuk tombol
+        document.querySelectorAll('.key').forEach(button => {
+            button.addEventListener('click', () => {
+                animateButton(button);
+                
+                // Tombol angka
+                if (button.hasAttribute('data-number')) {
+                    appendNumber(button.getAttribute('data-number'));
+                    updateDisplay();
+                }
+                
+                // Tombol operasi
+                else if (button.hasAttribute('data-action')) {
+                    const action = button.getAttribute('data-action');
+                    
+                    switch(action) {
+                        case 'clear':
+                            clearCalculator();
+                            break;
+                        case 'backspace':
+                            deleteLast();
+                            break;
+                        case 'equals':
+                            if (previousOperand && operation) {
+                                calculate();
+                            }
+                            break;
+                        case 'decimal':
+                            addDecimal();
+                            break;
+                        case 'plusminus':
+                            toggleSign();
+                            break;
+                        case 'percent':
+                            calculatePercent();
+                            break;
+                        case 'pi':
+                            addPi();
+                            break;
+                        case 'sqrt':
+                            // Untuk akar kuadrat, kita langsung menghitung
+                            if (currentOperand !== '') {
+                                previousOperand = currentOperand;
+                                operation = 'sqrt';
+                                calculate();
+                            }
+                            break;
+                        case 'factorial':
+                            // Untuk faktorial, kita langsung menghitung
+                            if (currentOperand !== '') {
+                                previousOperand = currentOperand;
+                                operation = 'factorial';
+                                calculate();
+                            }
+                            break;
+                        case 'power':
+                            // Untuk pangkat, kita perlu angka kedua
+                            if (currentOperand !== '') {
+                                chooseOperation('power');
+                            }
+                            break;
+                        default:
+                            // Operasi matematika dasar
+                            chooseOperation(action);
+                            break;
+                    }
+                    
+                    updateDisplay();
+                }
+            });
+        });
+        
+        // Event listener untuk tombol memori
+        document.querySelectorAll('.memory-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const memoryAction = button.getAttribute('data-memory');
+                
+                switch(memoryAction) {
+                    case 'mc':
+                        memoryClear();
+                        break;
+                    case 'mr':
+                        memoryRecall();
+                        break;
+                    case 'm+':
+                        memoryAdd();
+                        break;
+                    case 'm-':
+                        memorySubtract();
+                        break;
+                }
+                
+                updateDisplay();
+                animateButton(button);
+            });
+        });
+        
+        // Event listener untuk toggle tema
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            
+            // Ganti ikon tema
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('light-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            
+            animateButton(themeToggle);
+        });
+        
+        // Event listener untuk keyboard
+        document.addEventListener('keydown', event => {
+            // Cegah perilaku default untuk tombol yang kita tangani
+            if (event.key.match(/[0-9\.\+\-\*\/=]|Enter|Escape|Backspace/)) {
+                event.preventDefault();
+            }
+            
+            // Angka dan titik desimal
+            if (event.key >= '0' && event.key <= '9') {
+                appendNumber(event.key);
+                updateDisplay();
+            }
+            
+            // Titik desimal
+            if (event.key === '.') {
+                addDecimal();
+                updateDisplay();
+            }
+            
+            // Operasi matematika
+            if (event.key === '+') {
+                chooseOperation('add');
+                updateDisplay();
+            }
+            
+            if (event.key === '-') {
+                chooseOperation('subtract');
+                updateDisplay();
+            }
+            
+            if (event.key === '*') {
+                chooseOperation('multiply');
+                updateDisplay();
+            }
+            
+            if (event.key === '/') {
+                chooseOperation('divide');
+                updateDisplay();
+            }
+            
+            // Hasil (Enter atau =)
+            if (event.key === 'Enter' || event.key === '=') {
+                if (previousOperand && operation) {
+                    calculate();
+                    updateDisplay();
+                }
+            }
+            
+            // Clear (Escape)
+            if (event.key === 'Escape') {
+                clearCalculator();
+                updateDisplay();
+            }
+            
+            // Backspace
+            if (event.key === 'Backspace') {
+                deleteLast();
+                updateDisplay();
+            }
+            
+            // Persen
+            if (event.key === '%') {
+                calculatePercent();
+                updateDisplay();
+            }
+        });
+        
+        // Inisialisasi tampilan
+        updateDisplay();
+    </script>
+</body>
+</html>
